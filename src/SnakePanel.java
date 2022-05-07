@@ -29,6 +29,7 @@ public class SnakePanel extends JPanel implements Runnable {
     //initialize game board's screen and
     public void Screen() {
         setFocusable(true);
+        requestFocus(true); //fixes keys not being responsive sometimes when opening the game
         key = new Key(); // new key object for controls
         addKeyListener(key);
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -167,7 +168,7 @@ public class SnakePanel extends JPanel implements Runnable {
     public void checkCollision(){
         //this slows down the game if it's directly inside update(), checks snake's self collision
         for(int i = 0; i<snake.size(); i++) {
-            if(xCrd == snake.get(i).getxCrd() && yCrd == snake.get(i).getyCrd() ) {
+            if(xCrd == snake.get(i).getxCrd() && yCrd == snake.get(i).getyCrd()) {
                 if(i != snake.size() -1) {
                     stop();
                 }
@@ -180,18 +181,19 @@ public class SnakePanel extends JPanel implements Runnable {
         }
         */
         //this rather makes the snake to continue from the other side of the board when snake hits a wall
-        if(xCrd < -1) {
+        if(xCrd < 1 && left) {
             xCrd = 80;
         }
-        if(xCrd > 80) {
-            xCrd = -1;
-        }
-        if(yCrd < -1) {
+        if(yCrd < 1 && up) {
             yCrd = 80;
         }
-        if(yCrd > 80) {
+        if(xCrd > 78 && right) {
+            xCrd = -1;
+        }
+        if(yCrd > 78 && down) {
             yCrd = -1;
         }
+
     }
 
     //update gameboard entities
@@ -213,7 +215,7 @@ public class SnakePanel extends JPanel implements Runnable {
             }
         }
         ticks++;
-        if(ticks > 3000000) { //changes game speed, not sure how
+        if(ticks > 1000000) { //changes game speed, not sure how
             checkCollision(); //checks collision before moving
             //here we move update the snake's direction
             if(right) xCrd++;
