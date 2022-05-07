@@ -11,9 +11,8 @@ public class Apple {
         width = tileSize;
         height = tileSize;
     }
-    public void tick() {
-    }
 
+    //draws the apple
     public void draw(Graphics g) {
         g.setColor(Color.RED);
         g.fillRect(xCrd*width, yCrd*height, width, height);

@@ -11,15 +11,13 @@ public class BodyPart {
         width = tileSize;
         height = tileSize;
     }
-    public void tick() {
-    }
 
+    //draws the snake bodypart
     public void draw(Graphics g) {
         g.setColor(Color.BLACK);
-        g.fillRect(xCrd*width, yCrd*height, width, height);
+        //g.fillRect(xCrd*width, yCrd*height, width, height);
         g.setColor(Color.GREEN);
         g.fillRect(xCrd*width+2, yCrd*height+2, width - 4, height - 4);
-
     }
 
     public int getxCrd() {
