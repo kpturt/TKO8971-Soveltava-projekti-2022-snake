@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class SnakePanel extends JPanel implements Runnable {
-    //initializing logic variables
+    //logic variables initialization
     private static final long serialVersionUID = 1L; //universal version identifier
     private Thread thread; //not sure how threads work in this
     private Key key; //key object for movement keys
@@ -20,7 +20,7 @@ public class SnakePanel extends JPanel implements Runnable {
     private int xCrd = 40, yCrd = 40; //(starting) location of snake's head
     private int size = 5; //snake's size
     private boolean right = false, left = false, up = false, down = true; //direction of the snake
-    //entities
+    //entities initialization
     private BodyPart b;
     public ArrayList<BodyPart> snake;
     private Apple apple;
@@ -116,7 +116,7 @@ public class SnakePanel extends JPanel implements Runnable {
         //when opening game, display start screen
         if(start && !running){
             g.setColor(Color.black);
-            g.fillRect(0, 0, 800, 800);
+            g.fillRect(0, 0, WIDTH, HEIGHT);
             g.setColor(Color.white);
             g.setFont(new Font("arial", Font.BOLD, 50));
             g.drawString("SNAKE GAME", 235, 390);
@@ -130,7 +130,7 @@ public class SnakePanel extends JPanel implements Runnable {
 
             //black background
             g.setColor(Color.black);
-            g.fillRect(0, 0, 800, 800);
+            g.fillRect(0, 0, WIDTH, HEIGHT);
 
             //gray tiles
             g.setColor(Color.GRAY);
@@ -140,6 +140,8 @@ public class SnakePanel extends JPanel implements Runnable {
             for(int i = 0; i < HEIGHT / 10; i++) {
                 g.drawLine(0, i*10, WIDTH, i*10);
             }
+            /*g.setColor(Color.red);
+            g.fillRect(0, 0, 10, 800);*/
             //snake
             for(int i = 0; i < snake.size(); i++) {
                 snake.get(i).draw(g);
@@ -151,7 +153,7 @@ public class SnakePanel extends JPanel implements Runnable {
         //when game stops running display game over screen
         } else {
             g.setColor(Color.black);
-            g.fillRect(0, 0, 800, 800);
+            g.fillRect(0, 0, WIDTH, HEIGHT);
             g.setColor(Color.white);
             g.setFont(new Font("arial", Font.BOLD, 50));
             g.drawString("GAME OVER", 250, 390);
@@ -178,29 +180,28 @@ public class SnakePanel extends JPanel implements Runnable {
         }
         */
         //this rather makes the snake to continue from the other side of the board when snake hits a wall
-        if(xCrd < 0) {
-            xCrd = 79;
+        if(xCrd < -1) {
+            xCrd = 80;
         }
-        if(xCrd > 79) {
-            xCrd = 0;
+        if(xCrd > 80) {
+            xCrd = -1;
         }
-        if(yCrd < 0) {
-            yCrd = 79;
+        if(yCrd < -1) {
+            yCrd = 80;
         }
-        if(yCrd > 79) {
-            yCrd = 0;
+        if(yCrd > 80) {
+            yCrd = -1;
         }
     }
 
     //update gameboard entities
     public void update() {
-
         //adds apples when the game starts or when an apple is eaten
         if(apples.size() == 0) {
-            int xCrd = rnd.nextInt(79);
-            int yCrd = rnd.nextInt(79);
+            int xCrdApple = rnd.nextInt(79);
+            int yCrdApple = rnd.nextInt(79);
 
-            apple = new Apple(xCrd, yCrd, 10);
+            apple = new Apple(xCrdApple, yCrdApple, 10);
             apples.add(apple);
         }
         //if snake eats an apple, remove it from the board
@@ -212,7 +213,7 @@ public class SnakePanel extends JPanel implements Runnable {
             }
         }
         ticks++;
-        if(ticks > 1000000) { //changes game speed, not sure how
+        if(ticks > 3000000) { //changes game speed, not sure how
             checkCollision(); //checks collision before moving
             //here we move update the snake's direction
             if(right) xCrd++;
