@@ -7,32 +7,24 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class SnakePanel extends JPanel implements Runnable {
-    private static final long serialVersionUID = 1L; //from screen, ???
-    public static final int WIDTH = 800, HEIGHT = 800;
-    private Thread thread; //???
-    public boolean running = false;
-    private BodyPart b;
-    public ArrayList<BodyPart> snake;
-    private int xCrd = 40, yCrd = 40; //location of snake's head
+    //initializing logic variables
+    private static final long serialVersionUID = 1L; //universal version identifier
+    private Thread thread; //not sure how threads work in this
+    private Key key; //key object for movement keys
+    public boolean running = false; //checker for if the game is running or not
+    private boolean start = true; //checker for if player is in starting screen
+    Random rnd = new Random(); //new randomizer
+    private int ticks = 0; //game's ticks
+    //sizing and positions
+    public static final int WIDTH = 800, HEIGHT = 800; //game board size
+    private int xCrd = 40, yCrd = 40; //(starting) location of snake's head
     private int size = 5; //snake's size
     private boolean right = false, left = false, up = false, down = true; //direction of the snake
-    private int ticks = 0;
-    private Key key; //key object for movement keys
-    Random rnd = new Random();
-
+    //entities
+    private BodyPart b;
+    public ArrayList<BodyPart> snake;
     private Apple apple;
     private ArrayList<Apple> apples;
-    private boolean start = true; //checker for if player is in starting screen
-
-    //initialize a new game when player loses and starts over
-    public void newGame(){
-        System.out.println("Starting a new game...");
-        xCrd = 40; //x-location of snake's head
-        yCrd = 40; //y-location of snake's head
-        size = 500; //snake's size
-        ticks = 0;
-        Screen();
-    }
 
     //initialize game board's screen and
     public void Screen() {
@@ -100,12 +92,23 @@ public class SnakePanel extends JPanel implements Runnable {
     public void stop() {
         System.out.println("Game over!");
         running = false;
+        repaint(); //repaint once again to ensure drawing the game over screen
         try {
             thread.join();
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    //initialize a new game when player loses and starts over
+    public void newGame(){
+        System.out.println("Starting a new game...");
+        xCrd = 40; //x-location of snake's head
+        yCrd = 40; //y-location of snake's head
+        size = 500; //snake's size
+        ticks = 0;
+        Screen();
     }
 
     // draw the game board
@@ -158,9 +161,9 @@ public class SnakePanel extends JPanel implements Runnable {
         }
     }
 
-    //update gameboard entities
-    public void update() {
-        //this slows down the game the longer the snake gets?
+    //checks if the snake collides with itself or the wall
+    public void checkCollision(){
+        //this slows down the game if it's directly inside update(), checks snake's self collision
         for(int i = 0; i<snake.size(); i++) {
             if(xCrd == snake.get(i).getxCrd() && yCrd == snake.get(i).getyCrd() ) {
                 if(i != snake.size() -1) {
@@ -168,6 +171,30 @@ public class SnakePanel extends JPanel implements Runnable {
                 }
             }
         }
+        //this ends the game when the snake hits a wall
+        /*
+        if(xCrd < 0 || xCrd > 79 || yCrd < 0 || yCrd > 79) {
+            stop();
+        }
+        */
+        //this rather makes the snake to continue from the other side of the board when snake hits a wall
+        if(xCrd < 0) {
+            xCrd = 79;
+        }
+        if(xCrd > 79) {
+            xCrd = 0;
+        }
+        if(yCrd < 0) {
+            yCrd = 79;
+        }
+        if(yCrd > 79) {
+            yCrd = 0;
+        }
+    }
+
+    //update gameboard entities
+    public void update() {
+
         //adds apples when the game starts or when an apple is eaten
         if(apples.size() == 0) {
             int xCrd = rnd.nextInt(79);
@@ -184,27 +211,9 @@ public class SnakePanel extends JPanel implements Runnable {
                 i--;
             }
         }
-
-        //this ends the game when the snake hits a wall
-        if(xCrd < 0 || xCrd > 79 || yCrd < 0 || yCrd > 79) {
-            stop();
-        }
-        //this rather makes the snake to continue from the other side of the board when snake hits a wall
-        /*if(xCrd < 0) {
-            xCrd = 79;
-        }
-        if(xCrd > 79) {
-            xCrd = 0;
-        }
-        if(yCrd < 0) {
-            yCrd = 79;
-        }
-        if(yCrd > 79) {
-            yCrd = 0;
-        }*/
-
         ticks++;
-        if(ticks > 1000000) { //changes game speed
+        if(ticks > 1000000) { //changes game speed, not sure how
+            checkCollision(); //checks collision before moving
             //here we move update the snake's direction
             if(right) xCrd++;
             if(left) xCrd--;
@@ -224,22 +233,22 @@ public class SnakePanel extends JPanel implements Runnable {
     private class Key implements KeyListener{
         public void keyPressed(KeyEvent e) {
             int key = e.getKeyCode();
-            if(key == KeyEvent.VK_RIGHT && !left) {
+            if(key == KeyEvent.VK_RIGHT && !left) { //change direction to right
                 up = false;
                 down = false;
                 right = true;
             }
-            if(key == KeyEvent.VK_LEFT && !right) {
+            if(key == KeyEvent.VK_LEFT && !right) { //change direction to left
                 up = false;
                 down = false;
                 left = true;
             }
-            if(key == KeyEvent.VK_UP && !down) {
+            if(key == KeyEvent.VK_UP && !down) { //change direction to up
                 left = false;
                 right = false;
                 up = true;
             }
-            if(key == KeyEvent.VK_DOWN && !up) {
+            if(key == KeyEvent.VK_DOWN && !up) { //change direction to down
                 left = false;
                 right = false;
                 down = true;
