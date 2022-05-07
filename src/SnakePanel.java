@@ -1,7 +1,11 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Random;
@@ -25,8 +29,18 @@ public class SnakePanel extends JPanel implements Runnable {
     public ArrayList<BodyPart> snake;
     private Apple apple;
     private ArrayList<Apple> apples;
-    int xCrdApple = 10;
-    int yCrdApple = 10;
+    int xCrdApple = rnd.nextInt(79);
+    int yCrdApple = rnd.nextInt(79);
+
+    private BufferedImage image;
+
+    public SnakePanel(){
+        try{
+            image = ImageIO.read(new File("src/images/background.jpg"));
+        } catch (IOException e){
+            System.out.println("Error loading background image!");
+        }
+    }
 
     //initialize game board's screen and
     public void Screen() {
@@ -37,6 +51,7 @@ public class SnakePanel extends JPanel implements Runnable {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         snake = new ArrayList<BodyPart>();
         apples = new ArrayList<Apple>();
+
         startScreen();
     }
 
@@ -109,7 +124,7 @@ public class SnakePanel extends JPanel implements Runnable {
         System.out.println("Starting a new game...");
         xCrd = 40; //x-location of snake's head
         yCrd = 40; //y-location of snake's head
-        size = 500; //snake's size
+        size = 5; //snake's size
         ticks = 0;
         Screen();
     }
@@ -129,6 +144,7 @@ public class SnakePanel extends JPanel implements Runnable {
         }
         //when the game is running draw the board and entities
         else if(running == true){
+
             g.clearRect(0, 0, WIDTH, HEIGHT); //removes tail, moves snake
 
             //black background
@@ -136,6 +152,7 @@ public class SnakePanel extends JPanel implements Runnable {
             g.fillRect(0, 0, WIDTH, HEIGHT);
 
             //gray tiles
+            /*
             g.setColor(Color.GRAY);
             for(int i = 0; i < WIDTH / 10; i++) {
                 g.drawLine(i*10, 0, i*10, HEIGHT);
@@ -143,8 +160,13 @@ public class SnakePanel extends JPanel implements Runnable {
             for(int i = 0; i < HEIGHT / 10; i++) {
                 g.drawLine(0, i*10, WIDTH, i*10);
             }
+            */
+
             /*g.setColor(Color.red);
             g.fillRect(0, 0, 10, 800);*/
+
+            g.drawImage(image, 0, 0, this);
+
             //snake
             for(int i = 0; i < snake.size(); i++) {
                 snake.get(i).draw(g);

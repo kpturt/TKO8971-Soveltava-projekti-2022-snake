@@ -14,8 +14,8 @@ public class BodyPart {
 
     //draws the snake bodypart
     public void draw(Graphics g) {
-        g.setColor(Color.BLACK);
-        //g.fillRect(xCrd*width, yCrd*height, width, height);
+        g.setColor(new Color(0,128,0));
+        g.fillRect(xCrd*width, yCrd*height, width, height);
         g.setColor(Color.GREEN);
         g.fillRect(xCrd*width+2, yCrd*height+2, width - 4, height - 4);
     }
