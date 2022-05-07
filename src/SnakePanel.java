@@ -25,6 +25,8 @@ public class SnakePanel extends JPanel implements Runnable {
     public ArrayList<BodyPart> snake;
     private Apple apple;
     private ArrayList<Apple> apples;
+    int xCrdApple = 10;
+    int yCrdApple = 10;
 
     //initialize game board's screen and
     public void Screen() {
@@ -193,16 +195,31 @@ public class SnakePanel extends JPanel implements Runnable {
         if(yCrd > 78 && down) {
             yCrd = -1;
         }
+    }
 
+    //checks if generated apple is on top of the snake
+    public boolean checkAppleCollision(){
+        for(int i = 0; i<snake.size(); i++) {
+            if(xCrdApple == snake.get(i).getxCrd() && yCrdApple == snake.get(i).getyCrd()) {
+                //is on top, returns true
+                return true;
+            }
+        }
+        //is not on top, returns false
+        return false;
     }
 
     //update gameboard entities
     public void update() {
         //adds apples when the game starts or when an apple is eaten
+        xCrdApple = rnd.nextInt(79);
+        yCrdApple = rnd.nextInt(79);
         if(apples.size() == 0) {
-            int xCrdApple = rnd.nextInt(79);
-            int yCrdApple = rnd.nextInt(79);
-
+            //if checker returns true, generate new apple coordinates that are not on top of snake
+            while(checkAppleCollision()){
+                xCrdApple = rnd.nextInt(79);
+                yCrdApple = rnd.nextInt(79);
+            }
             apple = new Apple(xCrdApple, yCrdApple, 10);
             apples.add(apple);
         }
