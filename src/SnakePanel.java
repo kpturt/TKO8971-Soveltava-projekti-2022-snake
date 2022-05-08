@@ -6,10 +6,10 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.Random;
 
+//the game panel which goes inside the main frame
 public class SnakePanel extends JPanel implements Runnable {
     //logic variables initialization
     private static final long serialVersionUID = 1L; //universal version identifier
@@ -31,9 +31,8 @@ public class SnakePanel extends JPanel implements Runnable {
     private ArrayList<Apple> apples;
     int xCrdApple = rnd.nextInt(79);
     int yCrdApple = rnd.nextInt(79);
-
+    //images initialization
     private BufferedImage image;
-
     public SnakePanel(){
         try{
             image = ImageIO.read(new File("src/images/background.jpg"));
@@ -42,7 +41,7 @@ public class SnakePanel extends JPanel implements Runnable {
         }
     }
 
-    //initialize game board's screen and
+    //initialize game board's main screen and launch start screen view
     public void Screen() {
         setFocusable(true);
         requestFocus(true); //fixes keys not being responsive sometimes when opening the game
@@ -51,15 +50,14 @@ public class SnakePanel extends JPanel implements Runnable {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         snake = new ArrayList<BodyPart>();
         apples = new ArrayList<Apple>();
-
         startScreen();
     }
 
-    //function to check if player is in starting screen
+    //function to check if player is in starting screen, also draws the screen in graphics
     public void startScreen(){
         //when in starting screen wait until player starts the game
         if(start){
-            System.out.println("Welcome to snake game!");
+            System.out.println("Welcome to the snake game!");
         } else {
             //start the game when player presses space
             start();
@@ -98,7 +96,7 @@ public class SnakePanel extends JPanel implements Runnable {
         thread.start();
     }
 
-    //runs the game
+    //while running is true, continuously runs the game as well as the updating functions
     public void run() {
         while(running) {
             update();
@@ -106,11 +104,11 @@ public class SnakePanel extends JPanel implements Runnable {
         }
     }
 
-    //stops the game
+    //stops the game, aka game over
     public void stop() {
         System.out.println("Game over!");
         running = false;
-        repaint(); //repaint once again to ensure drawing the game over screen
+        repaint(); //repaint once again to ensure drawing the game over screen after collision
         try {
             thread.join();
         } catch (InterruptedException e) {
@@ -133,24 +131,25 @@ public class SnakePanel extends JPanel implements Runnable {
     public void paint(Graphics g) {
         //when opening game, display start screen
         if(start && !running){
+            //background
             g.setColor(Color.black);
             g.fillRect(0, 0, WIDTH, HEIGHT);
+            //text 1
             g.setColor(Color.white);
             g.setFont(new Font("arial", Font.BOLD, 50));
             g.drawString("SNAKE GAME", 235, 390);
+            //text 2 and 3
             g.setFont(new Font("arial", Font.BOLD, 20));
             g.drawString("press space to start", 310, 440);
             g.drawString("press escape to exit", 310, 470);
         }
         //when the game is running draw the board and entities
         else if(running == true){
-
-            g.clearRect(0, 0, WIDTH, HEIGHT); //removes tail, moves snake
-
+            //clears the board
+            g.clearRect(0, 0, WIDTH, HEIGHT);
             //black background
             g.setColor(Color.black);
             g.fillRect(0, 0, WIDTH, HEIGHT);
-
             //gray tiles
             /*
             g.setColor(Color.GRAY);
@@ -161,12 +160,13 @@ public class SnakePanel extends JPanel implements Runnable {
                 g.drawLine(0, i*10, WIDTH, i*10);
             }
             */
-
-            /*g.setColor(Color.red);
-            g.fillRect(0, 0, 10, 800);*/
-
+            //for borders
+            /*
+            g.setColor(Color.red);
+            g.fillRect(0, 0, 10, 800);
+            */
+            //background image
             g.drawImage(image, 0, 0, this);
-
             //snake
             for(int i = 0; i < snake.size(); i++) {
                 snake.get(i).draw(g);
@@ -177,11 +177,14 @@ public class SnakePanel extends JPanel implements Runnable {
             }
         //when game stops running display game over screen
         } else {
+            //background
             g.setColor(Color.black);
             g.fillRect(0, 0, WIDTH, HEIGHT);
+            //text 1
             g.setColor(Color.white);
             g.setFont(new Font("arial", Font.BOLD, 50));
             g.drawString("GAME OVER", 250, 390);
+            //text 2 and 3
             g.setFont(new Font("arial", Font.BOLD, 20));
             g.drawString("press space to restart", 300, 440);
             g.drawString("press escape to exit", 310, 470);
@@ -190,7 +193,7 @@ public class SnakePanel extends JPanel implements Runnable {
 
     //checks if the snake collides with itself or the wall
     public void checkCollision(){
-        //this slows down the game if it's directly inside update(), checks snake's self collision
+        //this one slows down the game if it's directly inside update(), checks snake's self collision
         for(int i = 0; i<snake.size(); i++) {
             if(xCrd == snake.get(i).getxCrd() && yCrd == snake.get(i).getyCrd()) {
                 if(i != snake.size() -1) {
@@ -242,6 +245,7 @@ public class SnakePanel extends JPanel implements Runnable {
                 xCrdApple = rnd.nextInt(79);
                 yCrdApple = rnd.nextInt(79);
             }
+            //create and add a new apple
             apple = new Apple(xCrdApple, yCrdApple, 10);
             apples.add(apple);
         }
@@ -254,7 +258,7 @@ public class SnakePanel extends JPanel implements Runnable {
             }
         }
         ticks++;
-        if(ticks > 1000000) { //changes game speed, not sure how
+        if(ticks > 1000000) { //changes game speed, not completely sure how
             checkCollision(); //checks collision before moving
             //here we move update the snake's direction
             if(right) xCrd++;
@@ -271,7 +275,7 @@ public class SnakePanel extends JPanel implements Runnable {
         }
     }
 
-    //listens to key presses to change the snake's direction, start or close the game
+    //listens to key presses to changes the snake's direction, start or close the game
     private class Key implements KeyListener{
         public void keyPressed(KeyEvent e) {
             int key = e.getKeyCode();
@@ -307,7 +311,7 @@ public class SnakePanel extends JPanel implements Runnable {
                     newGame();
                 }
             }
-            //exits game when escape button is pressed
+            //exits the game when escape button is pressed
             if(key == KeyEvent.VK_ESCAPE){
                 System.out.println("Exiting game...");
                System.exit(0);

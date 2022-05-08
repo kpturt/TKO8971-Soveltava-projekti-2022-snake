@@ -2,6 +2,7 @@ import java.awt.*;
 
 public class Apple {
 
+    //position and size
     private int xCrd, yCrd, width, height;
 
     //constructor
